@@ -1,4 +1,4 @@
-# 📝 My Note — A Django Notes App
+# 📝 NoteFlow — A Django Notes App
 
 A full-stack note-taking web application built with Django. Supports user authentication, complete CRUD operations, note categorization, pinning, archiving, and password reset via email.
 
