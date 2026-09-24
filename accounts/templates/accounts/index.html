@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteFlow — Your Smart Notes App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #6c63ff;
+            --primary-dark: #574fd6;
+            --secondary: #f64f59;
+            --dark: #0f0f23;
+            --dark2: #1a1a3e;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── NAVBAR ── */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 8%;
+            background: rgba(15, 15, 35, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            color: white;
+            background: var(--card-bg);
+        }
+
+        .nav-btn {
+            background: var(--primary) !important;
+            color: white !important;
+            padding: 9px 22px !important;
+            border-radius: 10px !important;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-dark) !important;
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.15) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(246, 79, 89, 0.1) 0%, transparent 70%);
+            bottom: 0;
+            right: -50px;
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(108, 99, 255, 0.15);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            color: #a78bfa;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1.5px;
+            animation: fadeInDown 0.8s ease 0.1s backwards;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary) 0%, #c084fc 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            line-height: 1.75;
+            margin-bottom: 44px;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.3s backwards;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(108, 99, 255, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--card-bg);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* ── STATS ── */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            padding: 50px 8%;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ── FEATURES ── */
+        .features {
+            padding: 100px 8%;
+            text-align: center;
+        }
+
+        .section-label {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-sub {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 500px;
+            margin: 0 auto 60px;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 30px;
+            text-align: left;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.06), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(108, 99, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .icon-purple {
+            background: rgba(108, 99, 255, 0.15);
+        }
+
+        .icon-pink {
+            background: rgba(246, 79, 89, 0.15);
+        }
+
+        .icon-blue {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        .icon-green {
+            background: rgba(52, 211, 153, 0.15);
+        }
+
+        .icon-orange {
+            background: rgba(251, 146, 60, 0.15);
+        }
+
+        .icon-yellow {
+            background: rgba(250, 204, 21, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* ── HOW IT WORKS ── */
+        .how {
+            padding: 100px 8%;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+            margin-top: 60px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .step-num {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.35);
+        }
+
+        .step h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ── CTA ── */
+        .cta {
+            padding: 100px 8%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.15), rgba(246, 79, 89, 0.08));
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 28px;
+            padding: 70px 40px;
+            max-width: 750px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .cta-box p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 36px;
+            line-height: 1.7;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 36px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav a:not(.nav-btn) {
+                display: none;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+
+            .step {
+                min-width: 160px;
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <a href="{% url 'landing' %}" class="logo">
+            <div class="logo-icon">📝</div>
+            NoteFlow
+        </a>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#how">How it works</a>
+            <a href="{% url 'login' %}">Sign In</a>
+            <a href="{% url 'register' %}" class="nav-btn">Get Started →</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="badge">✨ Your notes, organized perfectly</div>
+        <h1>Think Clearly,<br><span>Note Smarter</span></h1>
+        <p>NoteFlow is the cleanest way to capture your ideas, organize your thoughts, and never lose what matters.</p>
+        <div class="btn-group">
+            <a href="{% url 'register' %}" class="btn btn-primary">Start for Free →</a>
+            <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Notes Created</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">6</div>
+            <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Private & Secure</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">Free</div>
+            <div class="stat-label">Always</div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <p class="section-label">Features</p>
+        <h2 class="section-title">Everything you need to stay organized</h2>
+        <p class="section-sub">Simple but powerful features to keep your notes exactly where you need them.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-purple">📂</div>
+                <h3>Smart Categories</h3>
+                <p>Organize notes into Work, Study, Personal, Health, Finance, and more with one click.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-pink">🏷️</div>
+                <h3>Tags System</h3>
+                <p>Tag your notes as Important, Urgent, Idea, Todo, Reminder — find anything instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">📌</div>
+                <h3>Pin Important Notes</h3>
+                <p>Pin your most critical notes so they always appear at the top of your list.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-green">🔒</div>
+                <h3>Private & Secure</h3>
+                <p>Your notes are yours only. No one else can access, read, or modify your data.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-orange">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Create, edit, and delete notes in seconds. No loading screens, no waiting.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-yellow">🗂️</div>
+                <h3>Full CRUD</h3>
+                <p>Create, view, edit, and delete your notes easily from any page.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how" id="how">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title">Up and running in seconds</h2>
+        <p class="section-sub">No tutorials needed. Just sign up and start writing.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Create Account</h3>
+                <p>Sign up in under 30 seconds with just your email and password.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Write a Note</h3>
+                <p>Click "New Note", add your title, content, category and tag.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Stay Organized</h3>
+                <p>Pin, edit, archive or delete notes anytime from your dashboard.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-box">
+            <h2>Ready to get organized?</h2>
+            <p>Join thousands of people who use NoteFlow to capture ideas and stay on top of their work.</p>
+            <div class="btn-group">
+                <a href="{% url 'register' %}" class="btn btn-primary">Create Free Account →</a>
+                <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <a href="#" class="logo" style="font-size:18px;">
+            <div class="logo-icon" style="width:28px;height:28px;font-size:14px;">📝</div>
+            NoteFlow
+        </a>
+        <p>© 2026 NoteFlow. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        </div>
+    </footer>
+
+</body>
+
+</html>

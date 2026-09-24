@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archived Notes - NoteFlow</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 6%;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo { font-size: 20px; font-weight: 700; color: white; text-decoration: none; }
+
+        nav a { color: #94a3b8; text-decoration: none; margin-left: 20px; font-size: 14px; transition: 0.2s; }
+        nav a:hover { color: white; }
+
+        .main { flex: 1; padding: 40px 6%; }
+
+        /* Top bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .topbar h2 { color: white; font-size: 1.4rem; }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Note Card */
+        .note-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 14px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .note-card:hover { transform: translateY(-4px); border-color: rgba(108,99,255,0.3); }
+
+        .note-card h3 { color: white; font-size: 1rem; font-weight: 700; }
+
+        .note-card p { color: #94a3b8; font-size: 0.88rem; line-height: 1.6; flex: 1; }
+
+        .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-cat { background: rgba(108,99,255,0.2); color: #a78bfa; }
+        .badge-tag { background: rgba(255,255,255,0.08); color: #94a3b8; }
+
+        /* Actions */
+        .actions { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+
+        .actions a {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            text-align: center;
+            flex: 1; /* Makes buttons adjust nicely if they wrap */
+        }
+
+        .btn-view { background: rgba(108,99,255,0.15); color: #a78bfa; }
+        .btn-view:hover { background: rgba(108,99,255,0.3); }
+
+        .btn-unarchive { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .btn-unarchive:hover { background: rgba(16, 185, 129, 0.3); color: white; }
+        
+        .btn-edit { background: rgba(255,255,255,0.07); color: #94a3b8; }
+        .btn-edit:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        .btn-delete { background: rgba(246,79,89,0.12); color: #f64f59; }
+        .btn-delete:hover { background: rgba(246,79,89,0.25); }
+
+        /* Empty state */
+        .empty {
+            text-align: center;
+            margin-top: 80px;
+            color: #94a3b8;
+        }
+
+        .empty .empty-icon { font-size: 3.5rem; margin-bottom: 16px; }
+        .empty p { margin-bottom: 20px; font-size: 0.95rem; }
+         .pin-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(251,191,36,0.15);
+            color: #fbbf24;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'home' %}" class="logo">📝 NoteFlow</a>
+        <nav>
+            <a href="{% url 'notes:note_create' %}">Create Note</a>
+            <a href="{% url 'notes:note_list' %}">View All Notes</a>
+            <a href="{% url 'notes:note_archive_list' %}" style="color: white;">Archived</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <section class="main">
+        <div class="topbar">
+            <h2>📦 Archived Notes</h2>
+        </div>
+
+        {% if notes %}
+        <div class="grid">
+            {% for note in notes %}
+            
+            <div class="note-card">
+                {% if note.is_pinned %}
+                <span class="pin-badge">📌 Pinned</span>
+                {% endif %}
+
+                <h3>{{ note.title }}</h3>
+                <p>{{ note.content|truncatewords:20 }}</p>
+
+                <div class="badges">
+                    <span class="badge badge-cat">{{ note.get_category_display }}</span>
+                    <span class="badge badge-tag">{{ note.get_tag_display }}</span>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'notes:note_detail' note.pk %}" class="btn-view">View</a>
+                    <a href="{% url 'notes:note_unarchive' note.pk %}" class="btn-unarchive">Unarchive</a>
+                    <a href="{% url 'notes:note_edit' note.pk %}" class="btn-edit">Edit</a>
+                    <a href="{% url 'notes:note_delete' note.pk %}" class="btn-delete">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">
+            <div class="empty-icon">📦</div>
+            <p>No archived notes yet.</p>
+        </div>
+        {% endif %}
+    </section>
+
+</body>
+</html>

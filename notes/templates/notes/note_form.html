@@ -1,0 +1,186 @@
+<!-- templates/notes/note_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Note - NoteFlow</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 6%;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo { font-size: 20px; font-weight: 700; color: white; text-decoration: none; }
+
+        nav a { color: #94a3b8; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        nav a:hover { color: white; }
+
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 16px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 580px;
+        }
+
+        .card h2 { color: white; font-size: 1.4rem; margin-bottom: 28px; }
+
+        .field { display: flex; flex-direction: column; margin-bottom: 18px; }
+
+        .field label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600; }
+
+        .field input,
+        .field textarea,
+        .field select {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07);
+            color: white;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .field textarea { resize: vertical; min-height: 120px; }
+
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus { border-color: #6c63ff; }
+
+        .field select option { background: #1a1a3e; color: white; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Checkbox */
+        .check-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .check-field input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #6c63ff;
+            cursor: pointer;
+        }
+
+        .check-field label { color: #94a3b8; font-size: 0.9rem; cursor: pointer; }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 12px; }
+
+        .btn-save {
+            padding: 11px 28px;
+            background: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover { background: #574fd6; }
+
+        .btn-cancel {
+            padding: 11px 28px;
+            background: rgba(255,255,255,0.07);
+            color: #94a3b8;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover { color: white; background: rgba(255,255,255,0.12); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'home' %}" class="logo">📝 NoteFlow</a>
+        <nav>
+            <a href="{% url 'notes:note_create' %}">Create Note</a>
+            <a href="{% url 'notes:note_list' %}">View All Notes</a>
+            <a href="{% url 'notes:note_archive_list' %}">Archived</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <section class="main">
+        <div class="card">
+            <h2>📝 {{ action }} Note</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="field">
+                    <label>Title</label>
+                    {{ form.title }}
+                </div>
+
+                <div class="field">
+                    <label>Content</label>
+                    {{ form.content }}
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Category</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="field">
+                        <label>Tag</label>
+                        {{ form.tag }}
+                    </div>
+                </div>
+
+                <div class="check-field">
+                    {{ form.is_pinned }}
+                    <label>Pin this note?</label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-save">Save Note →</button>
+                    <a href="{% url 'notes:note_list' %}" class="btn-cancel">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ note.title }} - NoteFlow</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        /* Common Navbar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 6%;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo { font-size: 20px; font-weight: 700; color: white; text-decoration: none; }
+        
+        nav a { color: #94a3b8; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        nav a:hover { color: white; }
+
+        /* Detail Container */
+        .main { 
+            flex: 1; 
+            padding: 40px 6%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start;
+        }
+
+        /* Detail Card using same glass effect */
+        .detail-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 14px;
+            padding: 35px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card-header h2 { font-size: 2rem; font-weight: 700; }
+
+        .pin-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(251,191,36,0.15);
+            color: #fbbf24;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Badges */
+        .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 30px; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-cat { background: rgba(108,99,255,0.2); color: #a78bfa; }
+        .badge-tag { background: rgba(255,255,255,0.08); color: #94a3b8; }
+
+        /* Content Area */
+        .note-content { 
+            color: #cbd5e1; 
+            font-size: 1.1rem; 
+            line-height: 1.8; 
+            white-space: pre-wrap; 
+            margin-bottom: 40px; 
+        }
+
+        /* Footer (Date & Actions) */
+        .note-footer {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 25px;
+        }
+
+        .note-date { color: #64748b; font-size: 0.85rem; margin-bottom: 20px; display: block; }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 12px; }
+        
+        .btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.07); color: #94a3b8; }
+        .btn-back:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        .btn-edit { background: rgba(108,99,255,0.15); color: #a78bfa; }
+        .btn-edit:hover { background: rgba(108,99,255,0.3); }
+
+        .btn-delete { background: rgba(246,79,89,0.12); color: #f64f59; }
+        .btn-delete:hover { background: rgba(246,79,89,0.25); }
+        .btn-archive { background: rgba(168, 162, 158, 0.15); color: #a8a29e; }
+.btn-archive:hover { background: rgba(168, 162, 158, 0.3); color: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'home' %}" class="logo">📝 NoteFlow</a>
+        <nav>
+            <a href="{% url 'notes:note_create' %}">Create Note</a>
+            <a href="{% url 'notes:note_list' %}">View All Notes</a>
+            <a href="{% url 'notes:note_archive_list' %}">Archived</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <section class="main">
+        <div class="detail-card">
+            
+            <div class="card-header">
+                <h2>{{ note.title }}</h2>
+                {% if note.is_pinned %}
+                    <span class="pin-badge">📌 Pinned</span>
+                {% endif %}
+            </div>
+
+            <div class="badges">
+                <!-- Corrected Category and Tag display logic -->
+                <span class="badge badge-cat">{{ note.category.name }}</span>
+                {% for tag in note.tags.all %}
+                    <span class="badge badge-tag">#{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="note-content">{{ note.content }}</div>
+
+            <div class="note-footer">
+                <span class="note-date">
+                    Created: {{ note.created_at|date:"d M Y, h:i A" }} &nbsp;|&nbsp; 
+                    Updated: {{ note.updated_at|date:"d M Y, h:i A" }}
+                </span>
+
+                <div class="actions">
+                    <a href="{% url 'notes:note_list' %}" class="btn btn-back">← Back</a>
+                    <a href="{% url 'notes:note_archive' note.pk %}" class="btn-archive">Archive</a>
+                    <a href="{% url 'notes:note_edit' note.pk %}" class="btn btn-edit">Edit</a>
+                    <a href="{% url 'notes:note_delete' note.pk %}" class="btn btn-delete">Delete</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>
